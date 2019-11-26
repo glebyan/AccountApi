@@ -1,15 +1,12 @@
 package com.revolut.assignment;
 
-import com.revolut.assignment.datamodel.Account;
+import com.revolut.assignment.services.AccountService;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
 import com.revolut.assignment.services.StoreHandler;
 
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,5 +44,6 @@ public class App extends RouterNanoHTTPD {
 //        addRoute("/move", IndexHandler.class); // inside addMappings method
 //        addRoute("/user", UserHandler.class);
         addRoute("/store", StoreHandler.class);
+        addRoute("/account", AccountService.class);
     }
 }

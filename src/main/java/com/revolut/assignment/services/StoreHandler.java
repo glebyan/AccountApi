@@ -1,6 +1,6 @@
 package com.revolut.assignment.services;
 
-import mynonohttpd.pool.example.Message;
+import com.revolut.assignment.datamodel.Message;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
 import org.json.JSONObject;
@@ -33,7 +33,7 @@ public class StoreHandler extends RouterNanoHTTPD.GeneralHandler {
                 Integer amount = object.getInt("amount");
 
                 // создаем json
-                Message message = new Message("OK", from, to, amount.toString());
+                Message message = new Message(true, from + to + amount.toString(), 123L);
 
                 JSONObject jsonObject = new JSONObject(message);
                 String myJson = jsonObject.toString();

@@ -6,6 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Random;
 
 public class InMemoryTest {
@@ -13,7 +14,12 @@ public class InMemoryTest {
     @Before
     public void fillDatabase(){
         for (int i = 0; i < 100; i ++) {
-            System.out.println(InMemory.getAccountByUUID(InMemory.crateAccount()).changeValue(new BigDecimal(new Random().nextInt() + 5.25)));
+            BigDecimal bigDecimal = new BigDecimal(new Random().nextInt() + 5.22);
+
+            System.out.println(
+                    InMemory.getAccountByUUID(InMemory.crateAccount()).changeValue(new BigDecimal(
+                            new Random().nextInt() + 5.22).setScale(2, RoundingMode.HALF_EVEN))
+            );
         }
     }
 
