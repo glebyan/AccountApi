@@ -36,18 +36,37 @@ public class Transfer extends RouterNanoHTTPD.GeneralHandler {
                 // TODO transaction
                 Message messageFrom = fromAccount.changeValue(delta.negate());
                 Message messageTo = null;
-                if (messageFrom.getStatus()){
+                if (messageFrom.getStatus()) {
                     messageTo = toAccount.changeValue(delta);
                 }
 
-                JSONArray jsonArray = new JSONArray();
-                jsonArray.put(new JSONObject(fromAccount));
-                jsonArray.put(new JSONObject(toAccount));
-                jsonArray.put(new JSONObject(messageFrom));
-                jsonArray.put(new JSONObject(messageTo));
+                JSONObject jFrom = new JSONObject();
+                jFrom.put("UUID", from);
+                jFrom.put("amount", fromAccount.getValue());
+                if (messageFrom != null) {
+                    jFrom.put("history", messageFrom.getHistoryIndex());
+                    jFrom.put("message", messageFrom.getMessage());
+                }
+
+                JSONObject jTo = new JSONObject();
+                jTo.put("UUID", to);
+                jTo.put("amount", toAccount.getValue());
+                if (messageTo != null) {
+                    jTo.put("history", messageTo.getHistoryIndex());
+                    jTo.put("message", messageTo.getMessage());
+                }
+
+                JSONObject result = new JSONObject();
+                if (messageFrom != null ) {
+                    result.put("status", (messageFrom.getStatus()));
+                }
+                result.put("delta", delta);
+                result.put("from", jFrom);
+                result.put("to", jTo);
+
 
                 return newFixedLengthResponse(NanoHTTPD.Response.Status.ACCEPTED, "application/json",
-                        jsonArray.toString());
+                        result.toString());
 
             } else {
                 return newFixedLengthResponse(NanoHTTPD.Response.Status.NOT_FOUND, "application/json",

@@ -35,13 +35,13 @@ public class Account {
 
             if (newValue.compareTo(BigDecimal.ZERO) == -1) {
                 String comment = "Not Enough Money";
-                historyList.add(new History(delta, comment, false));
+                historyList.add(new History(delta, value, comment, false));
                 int historyIndex = historyList.size() - 1;
                 message = new Message(false, comment, historyIndex);
             } else {
                 String comment = "Success";
                 value = newValue;
-                historyList.add(new History(delta, comment, true));
+                historyList.add(new History(delta, value, comment, true));
                 int historyIndex = historyList.size() - 1;
                 message = new Message(true, comment, historyIndex);
             }
@@ -49,7 +49,7 @@ public class Account {
         } catch (InterruptedException e) {
             String comment = "Internal Error";
             e.printStackTrace();
-            historyList.add(new History(delta, comment, false));
+            historyList.add(new History(delta, value, comment, false));
             int historyIndex = historyList.size() - 1;
             message = new Message(false, comment, historyIndex);
         } finally {
@@ -69,7 +69,7 @@ public class Account {
             return changeValue(delta);
         }
         String comment = "Can't revert this operation";
-        historyList.add(new History(delta, comment + " " + historyIndex, false));
+        historyList.add(new History(delta, value, comment + " " + historyIndex, false));
         return new Message(false, comment, historyIndex);
     }
 

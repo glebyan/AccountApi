@@ -20,7 +20,7 @@ public class Utils {
         } catch (IOException | NanoHTTPD.ResponseException e) {
             e.printStackTrace();
         }
-        final String json = map.get("postData"); 
+        final String json = map.get("postData");
 
 
         return new JSONObject(json);

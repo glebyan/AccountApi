@@ -9,22 +9,27 @@ public class History {
     private final String comment;
     private final boolean result;
     private final boolean isRevert;
+    private final BigDecimal currentAmount;
 
-    History(BigDecimal delta, String comment, boolean result){
+    History(BigDecimal delta, BigDecimal currentAmount, String comment, boolean result){
         this.timestamp = System.currentTimeMillis();
         this.delta = delta;
         this.comment = comment;
         this.result = result;
         this.isRevert = false;
+        this.currentAmount = currentAmount;
     }
 
-    History(BigDecimal delta, String comment, boolean result, boolean isRevert){
+    History(BigDecimal delta, BigDecimal currentAmount, String comment, boolean result, boolean isRevert){
         this.timestamp = System.currentTimeMillis();
         this.delta = delta;
         this.comment = comment;
         this.result = result;
         this.isRevert = isRevert;
+        this.currentAmount = currentAmount;
     }
+
+
 
     public Long getTimestamp() {
         return timestamp;

@@ -39,7 +39,6 @@ public class App extends RouterNanoHTTPD {
 
     @Override
     public void addMappings() {
-        addRoute("/account", Example.class);
 
         addRoute("/create", CreateAccount.class); // () return UUID, 201 Created
         addRoute("/deposit", DepositAccount.class);      // (UUID, value) return 202 Accepted, or 404 Not found
