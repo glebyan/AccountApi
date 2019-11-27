@@ -3,9 +3,9 @@ package com.revolut.assignment.datamodel;
 public class Message {
     final boolean status;
     final String message;
-    final long historyIndex;
+    final int historyIndex;
 
-    public Message(boolean status, String message, long historyIndex){
+    public Message(boolean status, String message, int historyIndex){
         this.status = status;
         this.message = message; // TODO must be enum
         this.historyIndex = historyIndex;
@@ -23,7 +23,7 @@ public class Message {
         return status;
     }
 
-    public long getHistoryIndex() {
+    public int getHistoryIndex() {
         return historyIndex;
     }
 

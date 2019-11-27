@@ -2,6 +2,10 @@
 
 The simple service that provide REST API fro basic operation with bank accounts. 
 
+### TODO
+1. Change semaphore to reentantlock
+2. Add first part of transaction revert if second part is fail
+
 
 #### Feature list
 

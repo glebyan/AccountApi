@@ -28,7 +28,7 @@ public class Example extends RouterNanoHTTPD.GeneralHandler {
             if ("create".equals(action)) {
                 UUID uuid = InMemory.crateAccount();
                 Message message = new Message(true, "Account UUID:" + uuid +
-                        " was sucessfully created", 1L);
+                        " was sucessfully created", 1);
                 return newFixedLengthResponse(NanoHTTPD.Response.Status.OK, "application/json",
                         new JSONObject(message).toString());
             }
