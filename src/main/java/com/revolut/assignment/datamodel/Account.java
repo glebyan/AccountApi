@@ -9,92 +9,87 @@ import static java.math.RoundingMode.HALF_EVEN;
 
 public class Account {
 
-    BigDecimal value;
-    Long lastModifyTimestamp;
+    private BigDecimal value;
+    private Long lastModifyTimestamp;
     List<History> historyList = new ArrayList<>();
-    Semaphore semaphore = new Semaphore(1, true);
+    Semaphore semaphore = new Semaphore(1, true); // TODO replace the semaphore with reentantlock
 
-    public Account(){
+    public Account() {
         this.value = new BigDecimal(0);
     }
 
-    public Account(BigDecimal value){
+    public Account(BigDecimal value) {
         this.value = value;
         this.value.setScale(2, HALF_EVEN);
         this.lastModifyTimestamp = System.currentTimeMillis();
     }
 
-    public Message changeValue(BigDecimal delta){
-        boolean result = false;
-        String message = "UNEXPECTED_ERROR"; // TODO create enum for this
-        long historyIndex = -1;
+    public Message changeValue(BigDecimal delta) {
+
+        Message message;
 
         try {
             semaphore.acquire();
 
             BigDecimal newValue = value.add(delta);
 
-            if (newValue.compareTo(BigDecimal.ZERO) == -1){
-                message = "NO_ENOUGH_MONEY"; // TODO create enum for this
-                result = false;
-                historyList.add(new History());
-                historyIndex = historyList.size() - 1;
+            if (newValue.compareTo(BigDecimal.ZERO) == -1) {
+                String comment = "Not Enough Money";
+                historyList.add(new History(delta, comment, false));
+                long historyIndex = historyList.size() - 1;
+                message = new Message(false, comment, historyIndex);
             } else {
-                message = "OK"; // TODO create enum for this
-                result = true;
+                String comment = "Success";
                 value = newValue;
-                historyList.add(new History());
-                historyIndex = historyList.size() - 1;
+                historyList.add(new History(delta, comment, true));
+                long historyIndex = historyList.size() - 1;
+                message = new Message(true, comment, historyIndex);
             }
 
         } catch (InterruptedException e) {
+            String comment = "Internal Error";
             e.printStackTrace();
-            result = false;
-            message = "CANT_GET_CONTROL"; // TODO create enum for this
+            historyList.add(new History(delta, comment, false));
+            long historyIndex = historyList.size() - 1;
+            message = new Message(false, comment, historyIndex);
         } finally {
             semaphore.release();
         }
-
-        return new Message(result, message, historyIndex);
+        return message;
     }
 
-    public void revertChangeValue(long historyIndex){
-        // revert operation based on historyIndex immediately after performing
-        // or in other time using historyIndex
-        // this operation may put account in technical overdraft
-        try {
-            semaphore.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public Message revertChangeValue(int historyIndex) {
+
+        History history = historyList.get(historyIndex);
+
+        BigDecimal delta = history.getDelta().negate();
+
+        if (!history.isRevert()) {
+
+            return changeValue(delta);
         }
-        semaphore.release();
+        String comment = "Can't revert this operation";
+        historyList.add(new History(delta, comment + " " + historyIndex, false));
+        return new Message(false, comment, historyIndex);
     }
 
-    public List<History> getHistoryList(){
+    public List<History> getHistoryList() {
         // return all history, mostly narrow for testing not for frequently use in production
+        return historyList;
+    }
+
+    public List<History> getHistoryList(int pageSize, int pageNumber) {
+        // TOTO implement paging
         return null;
     }
 
-    public List<History> getHistoryList(int pageSize, int pageNumber){
-
-        return null;
+    public BigDecimal getValue() {
+        return value;
     }
 
-    public History getHistoryByTransactionId(long TransactionId){ //slow! not for frequently using
-
-        return null;
-    }
-
-    public BigDecimal getValue(){
-        return value; // BigDecimal is immutable so in my humble opinion its pretty safe
-    }
-
-    public int queueLength(){ // for query length monitoring
+    public int getQueueLength() { // for query length monitoring
         return semaphore.getQueueLength();
     }
-
-    // TODO Create my own semaphore with method that return queue. For checking process that not released account.
-
 
     @Override
     public String toString() {

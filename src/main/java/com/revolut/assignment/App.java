@@ -1,9 +1,8 @@
 package com.revolut.assignment;
 
-import com.revolut.assignment.services.AccountService;
+import com.revolut.assignment.services.*;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
-import com.revolut.assignment.services.StoreHandler;
 
 
 import java.io.IOException;
@@ -40,10 +39,13 @@ public class App extends RouterNanoHTTPD {
 
     @Override
     public void addMappings() {
-        // todo fill in the routes
-//        addRoute("/move", IndexHandler.class); // inside addMappings method
-//        addRoute("/user", UserHandler.class);
-        addRoute("/store", StoreHandler.class);
-        addRoute("/account", AccountService.class);
+        addRoute("/account", Example.class);
+
+        addRoute("/create", CreateAccount.class); // () return UUID, 201 Created
+        addRoute("/deposit", DepositAccount.class);      // (UUID, value) return 202 Accepted, or 404 Not found
+        addRoute("/total", TotalAccount.class);        // (UUID) return BigDecimal, 200 OK, or 404 Not found
+        addRoute("/list", ListAccounts.class );     // () return List<UUID>, 200 OK
+        addRoute("/history", HistoryAccount.class); // (UUID) return List<History> 200 OK, or 404 Not found
+        addRoute("/transfer", Transfer.class);      // (UUID from, UUID to, amount) 202 Accepted, or 404 Nof found, 406 Not acceptable
     }
 }

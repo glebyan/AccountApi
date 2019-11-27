@@ -19,6 +19,10 @@ public class Message {
         return message;
     }
 
+    public boolean getStatus(){
+        return status;
+    }
+
     public long getHistoryIndex() {
         return historyIndex;
     }
@@ -29,4 +33,6 @@ public class Message {
                 "message='" + message + '\'' +
                 '}';
     }
+
+
 }
