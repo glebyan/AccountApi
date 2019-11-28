@@ -37,6 +37,10 @@ public class App extends RouterNanoHTTPD {
         }
     }
 
+    public static void exit(){
+        System.exit(0);
+    }
+
     @Override
     public void addMappings() {
 
