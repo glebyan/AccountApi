@@ -35,7 +35,7 @@ public class DepositAccount extends RouterNanoHTTPD.GeneralHandler {
 
             Account account = InMemory.getAccountByUUID(UUID.fromString(sessionObject.getString("UUID")));
 
-            BigDecimal delta = new BigDecimal(sessionObject.getString("amount")).setScale(2, RoundingMode.HALF_EVEN);
+            BigDecimal delta = new BigDecimal(sessionObject.getString("amount"));
 
             if (account != null) {
 

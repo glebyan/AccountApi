@@ -5,6 +5,9 @@ The simple service that provide REST API fro basic operation with bank accounts.
 ### TODO
 1. Change semaphore to reentantlock
 2. Add first part of transaction revert if second part is fail
+3. Check null pointer exception
+4. Make somesing with bigdecimal rounding mode (maybe new datatype for mony or use jodamoney)
+5. Fix all potential problems with datatypes
 
 
 #### Feature list
@@ -75,7 +78,7 @@ Add additional notes about how to deploy this on a live system
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requestUtils to us.
 
 ## Versioning
 

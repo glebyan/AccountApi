@@ -4,6 +4,8 @@ import fi.iki.elonen.NanoHTTPD;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 
 public class Utils {
@@ -25,4 +27,13 @@ public class Utils {
 
         return new JSONObject(json);
     }
+
+    public static BigDecimal getMoney(){
+        return new BigDecimal(0).setScale(2, RoundingMode.HALF_EVEN);
+    }
+
+    public static BigDecimal getMoney(String string){
+        return new BigDecimal(string).setScale(2, RoundingMode.HALF_EVEN);
+    }
+
 }

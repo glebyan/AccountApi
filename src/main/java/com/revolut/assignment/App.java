@@ -46,7 +46,7 @@ public class App extends RouterNanoHTTPD {
 
         addRoute("/create", CreateAccount.class); // () return UUID, 201 Created
         addRoute("/deposit", DepositAccount.class);      // (UUID, value) return 202 Accepted, or 404 Not found
-        addRoute("/total", TotalAccount.class);        // (UUID) return BigDecimal, 200 OK, or 404 Not found
+        addRoute("/total", AmountAccount.class);        // (UUID) return BigDecimal, 200 OK, or 404 Not found
         addRoute("/list", ListAccounts.class );     // () return List<UUID>, 200 OK
         addRoute("/history", HistoryAccount.class); // (UUID) return List<History> 200 OK, or 404 Not found
         addRoute("/transfer", Transfer.class);      // (UUID from, UUID to, amount) 202 Accepted, or 404 Nof found, 406 Not acceptable

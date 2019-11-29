@@ -14,7 +14,7 @@ import java.util.UUID;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 
-public class TotalAccount extends RouterNanoHTTPD.GeneralHandler {
+public class AmountAccount extends RouterNanoHTTPD.GeneralHandler {
     @Override
     public NanoHTTPD.Response get(
             RouterNanoHTTPD.UriResource uriResource, Map<String, String> urlParams, NanoHTTPD.IHTTPSession session) {
@@ -30,7 +30,7 @@ public class TotalAccount extends RouterNanoHTTPD.GeneralHandler {
 
             if (account != null) {
                 object.put("UUID", uuid);
-                object.put("total", account.getValue());
+                object.put("amount", account.getValue().toString());
 
                 return newFixedLengthResponse(NanoHTTPD.Response.Status.OK, "application/json",
                         object.toString());

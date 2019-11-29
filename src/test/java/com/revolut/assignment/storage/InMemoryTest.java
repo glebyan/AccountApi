@@ -18,7 +18,7 @@ public class InMemoryTest {
 
             System.out.println(
                     InMemory.getAccountByUUID(InMemory.crateAccount()).changeValue(new BigDecimal(
-                            new Random().nextInt() + 5.22).setScale(2, RoundingMode.HALF_EVEN))
+                            new Random().nextInt() + 5.22))
             );
         }
     }

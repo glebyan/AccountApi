@@ -31,7 +31,7 @@ public class Account {
         try {
             semaphore.acquire();
 
-            BigDecimal newValue = value.add(delta);
+            BigDecimal newValue =  value.add(delta);
 
             if (newValue.compareTo(BigDecimal.ZERO) == -1) {
                 String comment = "Not Enough Money";

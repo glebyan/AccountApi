@@ -24,7 +24,7 @@ public class Transfer extends RouterNanoHTTPD.GeneralHandler {
         JSONObject sessionObject = Utils.getJSONObject(session);
         UUID from = UUID.fromString(sessionObject.getString("from"));
         UUID to = UUID.fromString(sessionObject.getString("to"));
-        BigDecimal delta = new BigDecimal(sessionObject.getString("delta")).setScale(2, RoundingMode.HALF_EVEN);
+        BigDecimal delta = new BigDecimal(sessionObject.getString("delta"));
 
         if (session.getMethod() == NanoHTTPD.Method.POST) {
 
