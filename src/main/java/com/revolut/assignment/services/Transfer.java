@@ -24,7 +24,7 @@ public class Transfer extends RouterNanoHTTPD.GeneralHandler {
         JSONObject sessionObject = Utils.getJSONObject(session);
         UUID from = UUID.fromString(sessionObject.getString("from"));
         UUID to = UUID.fromString(sessionObject.getString("to"));
-        BigDecimal delta = new BigDecimal(sessionObject.getString("delta"));
+        BigDecimal delta = new BigDecimal(sessionObject.getString("amount"));
 
         if (session.getMethod() == NanoHTTPD.Method.POST) {
 
@@ -40,33 +40,10 @@ public class Transfer extends RouterNanoHTTPD.GeneralHandler {
                     messageTo = toAccount.changeValue(delta);
                 }
 
-                JSONObject jFrom = new JSONObject();
-                jFrom.put("UUID", from);
-                jFrom.put("amount", fromAccount.getValue());
-                if (messageFrom != null) {
-                    jFrom.put("history", messageFrom.getHistoryIndex());
-                    jFrom.put("message", messageFrom.getMessage());
-                }
-
-                JSONObject jTo = new JSONObject();
-                jTo.put("UUID", to);
-                jTo.put("amount", toAccount.getValue());
-                if (messageTo != null) {
-                    jTo.put("history", messageTo.getHistoryIndex());
-                    jTo.put("message", messageTo.getMessage());
-                }
-
-                JSONObject result = new JSONObject();
-                if (messageFrom != null ) {
-                    result.put("status", (messageFrom.getStatus()));
-                }
-                result.put("delta", delta);
-                result.put("from", jFrom);
-                result.put("to", jTo);
 
 
                 return newFixedLengthResponse(NanoHTTPD.Response.Status.ACCEPTED, "application/json",
-                        result.toString());
+                        "");
 
             } else {
                 return newFixedLengthResponse(NanoHTTPD.Response.Status.NOT_FOUND, "application/json",

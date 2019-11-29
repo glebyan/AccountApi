@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.UUID;
 
 public class RequestsTest {
@@ -32,7 +34,13 @@ public class RequestsTest {
 
             System.out.println(RequestUtils.getAccountHistoryReq(uuid));
 
+            UUID to = RequestUtils.createAccountReq();
 
+            System.out.println("REsult = " +
+                    RequestUtils.transferMoney(
+                            uuid,
+                            to,
+                            new BigDecimal("1000").setScale(2, RoundingMode.HALF_EVEN)));
 
         } catch (IOException e) {
             e.printStackTrace();

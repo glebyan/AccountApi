@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -131,5 +132,25 @@ public class RequestUtils {
         JSONObject responseData = new JSONObject(EntityUtils.toString(response.getEntity()));
 
         return new BigDecimal(responseData.getString("amount")).setScale(2, RoundingMode.HALF_EVEN);
+    }
+
+    public static int transferMoney(UUID from, UUID to, BigDecimal amount) throws IOException {
+
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpPost request = new HttpPost(url + "/transfer");
+
+        StringEntity params = new StringEntity(
+                new JSONObject()
+                        .put("from", from.toString())
+                        .put("to", to.toString())
+                        .put("amount", amount.toString())
+                        .toString()
+        );
+        request.addHeader("content-type", "application/json");
+        request.setEntity(params);
+
+        HttpResponse response = client.execute(request);
+
+        return response.getStatusLine().getStatusCode();
     }
 }
