@@ -9,25 +9,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
 
 public class AccountTransferServiceTest {
 
     TreeMap<Integer, Account> sortedMap = new TreeMap();
     Map datastore = Collections.synchronizedSortedMap(sortedMap);
     List <UUID> accountNumberList = Collections.synchronizedList(new ArrayList<>());
-
-    // нужно заполнить датастор
-
-    @Test
-    public void moneyTransferTest(){
-        /* создаем 1000 аккаунтов
-         кладем на первый аккаунт в листе 10_000 уе
-         запускам в 10 потоков
-         цикличный перевод по всем аккаунтам с первого по последний по 1000 рублей63
-         все должно отработать, на последнем аккаунте должно оказаться 10_000 уе
-        */
-    }
 
     @Test
     public void AccountCreationTest() throws InterruptedException {

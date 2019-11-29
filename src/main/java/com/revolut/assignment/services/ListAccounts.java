@@ -28,6 +28,7 @@ public class ListAccounts extends RouterNanoHTTPD.GeneralHandler {
 
             for (UUID u : list) {
                 jsonArray.put(new JSONObject().put("UUID", u.toString()));
+
             }
 
             JSONObject object = new JSONObject();
