@@ -1,6 +1,7 @@
 package com.revolut.assignment;
 
 import com.revolut.assignment.services.*;
+import com.revolut.assignment.utils.Utils;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
 import org.h2.tools.Server;
@@ -31,8 +32,8 @@ public class App extends RouterNanoHTTPD {
             app.setAsyncRunner(new BoundRunner(Executors.newFixedThreadPool(webThreads)));
             app.addMappings();
             app.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
-            logger.info("waiting for connections on port " + port + " using a maximum of " +
-                    webThreads + " web threads");
+            logger.info("WEB server started on port " + port + " (" +
+                    webThreads + " threads)");
 
         } catch (Throwable t) {
             logger.log(Level.SEVERE, "Couldn't start server", t);
@@ -59,6 +60,8 @@ public class App extends RouterNanoHTTPD {
         try {
             Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
             logger.info("H2 Server started");
+            Utils.dbInit();
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
