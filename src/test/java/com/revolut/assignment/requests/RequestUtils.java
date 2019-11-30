@@ -84,7 +84,7 @@ public class RequestUtils {
                     new History(
                             responseData.getLong("timestamp"),
                             responseData.getBigDecimal("delta").setScale(2, RoundingMode.HALF_EVEN),
-                            new String(responseData.getString("comment")),
+                            responseData.getString("comment"),
                             responseData.getBoolean("result"),
                             responseData.getBoolean("revert"),
                             responseData.getBigDecimal("currentAmount").setScale(2, RoundingMode.HALF_EVEN)
@@ -93,7 +93,7 @@ public class RequestUtils {
         return list;
     }
 
-    public static List<UUID> getFullAccountsList() throws IOException {
+    public static List<UUID> getFullAccountsListReq() throws IOException {
 
         List<UUID> uuidList = new ArrayList<>();
 
@@ -114,7 +114,7 @@ public class RequestUtils {
         return uuidList;
     }
 
-    public static BigDecimal getAccountAmount(UUID uuid) throws IOException {
+    public static BigDecimal getAccountAmountReq(UUID uuid) throws IOException {
 
         HttpClient client = HttpClientBuilder.create().build();
         HttpPost request = new HttpPost(url + "/total");
@@ -134,7 +134,7 @@ public class RequestUtils {
         return new BigDecimal(responseData.getString("amount")).setScale(2, RoundingMode.HALF_EVEN);
     }
 
-    public static int transferMoney(UUID from, UUID to, BigDecimal amount) throws IOException {
+    public static int transferMoneyReq(UUID from, UUID to, BigDecimal amount) throws IOException {
 
         HttpClient client = HttpClientBuilder.create().build();
         HttpPost request = new HttpPost(url + "/transfer");

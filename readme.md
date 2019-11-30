@@ -9,6 +9,7 @@ The simple service that provide REST API fro basic operation with bank accounts.
 4. Make somesing with bigdecimal rounding mode (maybe new datatype for mony or use jodamoney)
 5. Fix all potential problems with datatypes
 
+Its not actual services, its just fat ugly controllers, but I just need to start new strim, and I do it intentually for simplification
 
 #### Feature list
 

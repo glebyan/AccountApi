@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.UUID;
 
@@ -24,20 +23,20 @@ public class RequestsTest {
                 RequestUtils.depositAccountReq(uuid, new BigDecimal(1.24));
             }
 
-            System.out.println(uuid + " : " +RequestUtils.getAccountAmount(uuid));
+            System.out.println(uuid + " : " +RequestUtils.getAccountAmountReq(uuid));
 
             for (int i = 0; i < 10; i++){
                 RequestUtils.createAccountReq();
             }
 
-            System.out.println(RequestUtils.getFullAccountsList());
+            System.out.println(RequestUtils.getFullAccountsListReq());
 
             System.out.println(RequestUtils.getAccountHistoryReq(uuid));
 
             UUID to = RequestUtils.createAccountReq();
 
             System.out.println("REsult = " +
-                    RequestUtils.transferMoney(
+                    RequestUtils.transferMoneyReq(
                             uuid,
                             to,
                             new BigDecimal("1000").setScale(2, RoundingMode.HALF_EVEN)));
