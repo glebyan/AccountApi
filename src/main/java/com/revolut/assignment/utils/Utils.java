@@ -23,8 +23,6 @@ public class Utils {
 
     private static final Logger logger = Logger.getLogger(Utils.class.getName());
 
-    public static final String connectionString = "jdbc:h2:mem:test";
-
     private Utils(){}
 
     public static final String WRONG_REQUEST = "{\"errormessage\":\"wrong request type\"}";
@@ -67,7 +65,8 @@ public class Utils {
         InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         BufferedReader reader = new BufferedReader(streamReader);
 
-        try (Connection connection = DriverManager.getConnection(connectionString, "sa", "")){
+        try (Connection connection = DriverManager.getConnection(
+                "jdbc:h2:~/h2/AccountApi", "sa", "")){
             RunScript.execute(connection, reader);
             logger.info("DB successful initialized");
         } catch (SQLException e) {

@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 import static org.junit.Assert.assertEquals;
 
 
-public class AccountTransferServiceTest {
+public class AccountTransferMoneyControllerServiceTest {
 
     TreeMap<Integer, Account> sortedMap = new TreeMap();
     Map datastore = Collections.synchronizedSortedMap(sortedMap);

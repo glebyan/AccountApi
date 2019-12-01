@@ -1,17 +1,16 @@
 package com.revolut.assignment;
 
-import com.revolut.assignment.services.*;
-import com.revolut.assignment.utils.Utils;
+import com.revolut.assignment.controllers.*;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
-import org.h2.tools.Server;
 
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.revolut.assignment.utils.Utils.dbInit;
 
 
 public class App extends RouterNanoHTTPD {
@@ -20,7 +19,8 @@ public class App extends RouterNanoHTTPD {
 
     public App(int port) throws IOException {
         super(port);
-        startH2();
+//        startH2();
+        dbInit();
     }
 
     public static void main(String[] args) {
@@ -48,23 +48,23 @@ public class App extends RouterNanoHTTPD {
     @Override
     public void addMappings() {
 
-        addRoute("/create", CreateAccount.class); // () return UUID, 201 Created
-        addRoute("/deposit", DepositAccount.class);      // (UUID, value) return 202 Accepted, or 404 Not found
-        addRoute("/total", AmountAccount.class);        // (UUID) return BigDecimal, 200 OK, or 404 Not found
-        addRoute("/list", ListAccounts.class);     // () return List<UUID>, 200 OK
-        addRoute("/history", HistoryAccount.class); // (UUID) return List<History> 200 OK, or 404 Not found
-        addRoute("/transfer", Transfer.class);      // (UUID from, UUID to, amount) 202 Accepted, or 404 Nof found, 406 Not acceptable
+        addRoute("/create", CreateAccountController.class); // () return UUID, 201 Created
+        addRoute("/deposit", DepositAccountController.class);      // (UUID, value) return 202 Accepted, or 404 Not found
+        addRoute("/total", GetAccountAmountController.class);        // (UUID) return BigDecimal, 200 OK, or 404 Not found
+        addRoute("/list", GetAccountsListController.class);     // () return List<UUID>, 200 OK
+        addRoute("/history", GetAccountHistoryController.class); // (UUID) return List<History> 200 OK, or 404 Not found
+        addRoute("/transfer", TransferMoneyController.class);      // (UUID from, UUID to, amount) 202 Accepted, or 404 Nof found, 406 Not acceptable
     }
 
-    private static void startH2() {
-        try {
-            Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
-            logger.info("H2 Server started");
-            Utils.dbInit();
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
+//    private static void startH2() {
+//        try {
+//            Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
+//            logger.info("H2 Server started");
+//            Utils.dbInit();
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 }

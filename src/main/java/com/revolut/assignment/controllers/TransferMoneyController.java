@@ -1,4 +1,4 @@
-package com.revolut.assignment.services;
+package com.revolut.assignment.controllers;
 
 import com.revolut.assignment.datamodel.Account;
 import com.revolut.assignment.datamodel.Message;
@@ -6,17 +6,15 @@ import com.revolut.assignment.storage.InMemory;
 import com.revolut.assignment.utils.Utils;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Map;
 import java.util.UUID;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 
-public class Transfer extends RouterNanoHTTPD.GeneralHandler {
+public class TransferMoneyController extends RouterNanoHTTPD.GeneralHandler {
     @Override
     public NanoHTTPD.Response get(
             RouterNanoHTTPD.UriResource uriResource, Map<String, String> urlParams, NanoHTTPD.IHTTPSession session) {
