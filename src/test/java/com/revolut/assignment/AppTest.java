@@ -1,328 +1,152 @@
 package com.revolut.assignment;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
 import org.junit.*;
-
+import org.junit.runners.MethodSorters;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.revolut.assignment.requests.RequestUtils.*;
 import static org.junit.Assert.assertEquals;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AppTest {
 
+    int numberOfAccounts = 100; //should be divisible by 10 without remainder
 
     @BeforeClass
     public static void setUp() {
         App.main(new String[]{});
-
     }
 
     @Test
-    public void createAccountsTest() throws Exception {
+    public void test1CreateAccount() throws SQLException {
+        try {
 
-        for (int i = 0; i < 100; i++) {
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            UUID uuid;
-            StringWriter writer = new StringWriter();
 
-            try {
-
-                HttpPost postRequest = new HttpPost("http://localhost:8080/create");
-                postRequest.addHeader("content-type", "application/json");
-                HttpResponse response = httpClient.execute(postRequest);
-                String responseJSON = EntityUtils.toString(response.getEntity());
-
-                int statusCode = response.getStatusLine().getStatusCode();
-//                System.out.println(response.getEntity().getContentType());
-//                System.out.println(responseJSON);
-
-                JSONObject jsonObject = new JSONObject(responseJSON.toString());
-                uuid = UUID.fromString(jsonObject.getString("UUID"));
-                System.out.println("The UUID = " + uuid);
-
-                assertEquals(statusCode, 201);
-
-            } finally {
-                httpClient.getConnectionManager().shutdown();
+            for (int i = 0; i < numberOfAccounts; i++) {
+                createAccountReq();
             }
+
+            Connection connection = DriverManager.getConnection("jdbc:h2:~/h2/AccountApi", "sa", "");
+
+            PreparedStatement ps = connection.prepareStatement(
+                    "select count(*) from ACCOUNTS"
+            );
+
+            ps.executeQuery();
+            ResultSet resultSet = ps.getResultSet();
+            resultSet.next();
+            Long quantity = resultSet.getLong(1);
+
+            assertEquals(new Long(numberOfAccounts), quantity);
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     @Test
-    public void depositAccountsTest() throws Exception {
+    public void test2DepositAccount() throws SQLException {
+        try {
 
-        List<UUID> accountUUIDList = createAccounts();
+            ArrayList<UUID> accounts = new ArrayList();
 
-        Runnable run = new Runnable() {
-            @Override
-            public void run() {
-                for (UUID u : accountUUIDList) {
-                    DefaultHttpClient httpClient = new DefaultHttpClient();
-                    StringWriter writer = new StringWriter();
-                    try {
-                        HttpPost postRequest = new HttpPost("http://localhost:8080/deposit");
+            Connection connection = DriverManager.getConnection("jdbc:h2:~/h2/AccountApi", "sa", "");
 
-                        postRequest.addHeader("content-type", "application/json");
+            PreparedStatement selectAccountUuidFromAccounts = connection.prepareStatement(
+                    "select ACCOUNT_UUID from ACCOUNTS"
+            );
 
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("UUID", u.toString());
-                        jsonObject.put("amount", "1000");
-                        writer.append(jsonObject.toString());
-
-                        StringEntity userEntity = null;
-
-                        userEntity = new StringEntity(writer.getBuffer().toString());
-
-                        postRequest.setEntity(userEntity);
-
-                        HttpResponse response = httpClient.execute(postRequest);
-
-                        String responseJSON = EntityUtils.toString(response.getEntity());
-
-                        int statusCode = response.getStatusLine().getStatusCode();
-                        System.out.println(response.getEntity().getContentType());
-                        System.out.println(responseJSON);
-
-                    } catch (ClientProtocolException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        httpClient.getConnectionManager().shutdown();
-                    }
-                }
+            selectAccountUuidFromAccounts.executeQuery();
+            ResultSet selectAccountUuidFromAccountsResultSet = selectAccountUuidFromAccounts.getResultSet();
+            while (selectAccountUuidFromAccountsResultSet.next()) {
+                accounts.add(UUID.fromString(selectAccountUuidFromAccountsResultSet.getString(1)));
             }
-        };
 
-        for (int i = 0; i < 10; i++) {
-            new Thread(run).start();
-        }
-        Thread.currentThread().sleep(10_000);
-        for (UUID u :accountUUIDList){
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            try {
-
-                HttpPost postRequest = new HttpPost("http://localhost:8080/total");
-                postRequest.addHeader("content-type", "application/json");
-
-                JSONObject jsonRequest = new JSONObject().put("UUID", u.toString());
-
-                StringEntity entity = new StringEntity(jsonRequest.toString());
-                System.out.println(jsonRequest);
-                postRequest.setEntity(entity);
-
-                HttpResponse response = httpClient.execute(postRequest);
-                String responseJSON = EntityUtils.toString(response.getEntity());
-
-                JSONObject jsonResponse = new JSONObject(responseJSON);
-
-                BigInteger total = new BigInteger(jsonResponse.get("total").toString());
-
-                assertEquals(jsonRequest.toString(), total, new BigInteger("10000"));
-
-            } finally {
-                httpClient.getConnectionManager().shutdown();
+            for (UUID u : accounts){
+                depositAccountReq(u, new BigDecimal(10_000).setScale(2, RoundingMode.HALF_EVEN));
             }
-        }
-    }
 
-    @Test
-    @Ignore
-    public void moneyTransferTest() throws Exception {
-
-        List <UUID> list = deposit();
-
-        Runnable run = new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 99; i ++) {
-                    DefaultHttpClient httpClient = new DefaultHttpClient();
-                    StringWriter writer = new StringWriter();
-                    try {
-                        HttpPost postRequest = new HttpPost("http://localhost:8080/transfer");
-
-                        postRequest.addHeader("content-type", "application/json");
-
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("from", list.get(i).toString());
-                        jsonObject.put("to", list.get(i+1).toString());
-                        jsonObject.put("delta", "1000");
-                        writer.append(jsonObject.toString());
-
-                        StringEntity userEntity = null;
-
-                        userEntity = new StringEntity(writer.getBuffer().toString());
-
-                        postRequest.setEntity(userEntity);
-
-                        HttpResponse response = httpClient.execute(postRequest);
-
-                        String responseJSON = EntityUtils.toString(response.getEntity());
-
-                        int statusCode = response.getStatusLine().getStatusCode();
-                        System.out.println(response.getEntity().getContentType());
-                        System.out.println(responseJSON);
-
-                    } catch (ClientProtocolException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        httpClient.getConnectionManager().shutdown();
-                    }
-                }
-            }
-        };
-
-
-        List <Thread> threads= new ArrayList<>();
-
-        for (int i = 0; i < 10; i++) {
-            Thread thread = new Thread(run);
-            threads.add(thread);
-            thread.start();
-        }
-
-        threads.stream().forEach(p -> {
-            try {
-                p.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-
-        System.out.println(getAccountAmount(list.get(0)));
-        System.out.println(getAccountAmount(list.get(99)));
-
-
-
-
-    }
-
-
-
-    private static List<UUID> createAccounts() throws IOException {
-        List<UUID> list = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            UUID uuid;
-            try {
-
-                HttpPost postRequest = new HttpPost("http://localhost:8080/create");
-                postRequest.addHeader("content-type", "application/json");
-                HttpResponse response = httpClient.execute(postRequest);
-                String responseJSON = EntityUtils.toString(response.getEntity());
-
-                int statusCode = response.getStatusLine().getStatusCode();
-
-                JSONObject jsonObject = new JSONObject(responseJSON.toString());
-                uuid = UUID.fromString(jsonObject.getString("UUID"));
-                list.add(uuid);
-
-            } finally {
-                httpClient.getConnectionManager().shutdown();
-            }
-        }
-        return list;
-    }
-
-    public static List <UUID> deposit() throws IOException {
-        List <UUID> list = createAccounts();
-
-        for (UUID u : list) {
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            StringWriter writer = new StringWriter();
-            try {
-                HttpPost postRequest = new HttpPost("http://localhost:8080/deposit");
-
-                postRequest.addHeader("content-type", "application/json");
-
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("UUID", u.toString());
-                jsonObject.put("amount", "1000");
-                writer.append(jsonObject.toString());
-
-                StringEntity userEntity = null;
-
-                userEntity = new StringEntity(writer.getBuffer().toString());
-
-                postRequest.setEntity(userEntity);
-
-                HttpResponse response = httpClient.execute(postRequest);
-
-//                String responseJSON = EntityUtils.toString(response.getEntity()); //
+//            PreparedStatement selectTotalAmountFromAccounts = connection.prepareStatement(
+//                    "select TOTAL_AMOUNT from ACCOUNTS"
+//            );
 //
-//                int statusCode = response.getStatusLine().getStatusCode();
+//            selectTotalAmountFromAccounts.executeQuery();
+//            ResultSet selectTotalAmountFromAccountsResultSet = selectTotalAmountFromAccounts.getResultSet();
+//
+//            while (selectTotalAmountFromAccountsResultSet.next()){
+//
+//                assertEquals(new BigDecimal(10_000).setScale(2, RoundingMode.HALF_EVEN),
+//                        selectTotalAmountFromAccountsResultSet.getBigDecimal(1));
+//            }
 
+            for (UUID u : accounts){
+                assertEquals(new BigDecimal(10_000).setScale(2, RoundingMode.HALF_EVEN),
+                        getAccountAmountReq(u));
 
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                httpClient.getConnectionManager().shutdown();
             }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    return list;
     }
 
+    @Test
+    public void test3TransferMoney() throws SQLException, IOException, InterruptedException {
+        ArrayList<UUID> accounts = new ArrayList();
 
-    public static BigDecimal getAccountAmount(UUID uuid){
+        Connection connection = DriverManager.getConnection("jdbc:h2:~/h2/AccountApi", "sa", "");
 
-        String value = null;
+        PreparedStatement selectAccountUuidFromAccounts = connection.prepareStatement(
+                "select ACCOUNT_UUID from ACCOUNTS"
+        );
 
-            DefaultHttpClient httpClient = new DefaultHttpClient();
+        selectAccountUuidFromAccounts.executeQuery();
+        ResultSet selectAccountUuidFromAccountsResultSet = selectAccountUuidFromAccounts.getResultSet();
+        while (selectAccountUuidFromAccountsResultSet.next()) {
+            accounts.add(UUID.fromString(selectAccountUuidFromAccountsResultSet.getString(1)));
+        }
 
-            try {
+        Runnable run = new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < accounts.size()-1; i++){
+                    try {
+                        transferMoneyReq(accounts.get(i), accounts.get(i+1),
+                                new BigDecimal(1000).setScale(2, RoundingMode.HALF_EVEN));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-                HttpPost postRequest = new HttpPost("http://localhost:8080/total");
-                postRequest.addHeader("content-type", "application/json");
-
-
-
-
-                JSONObject jsonRequest = new JSONObject();
-                jsonRequest.put("UUID", uuid);
-
-
-
-
-
-                StringEntity userEntity = null;
-
-                userEntity = new StringEntity(jsonRequest.toString());
-
-                postRequest.setEntity(userEntity);
-
-
-                HttpResponse response = httpClient.execute(postRequest);
-                String responseJSON = EntityUtils.toString(response.getEntity());
-
-                JSONObject jsonObject = new JSONObject(responseJSON.toString());
-                value = jsonObject.getString("amount");
-
-
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                httpClient.getConnectionManager().shutdown();
+                }
             }
+        };
+
+        List<Thread> threadList = new ArrayList<>();
+        for (int i = 0; i < 10; i++){
+            threadList.add(new Thread(run));
+        }
+        for (Thread t : threadList){
+            t.start();
+            t.join();
+        }
+
+        assertEquals(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN),
+                getAccountAmountReq(accounts.get(0)));
+        assertEquals(new BigDecimal(10_000).setScale(2, RoundingMode.HALF_EVEN),
+                getAccountAmountReq(accounts.get(1)));
+        assertEquals(new BigDecimal(10_000).setScale(2, RoundingMode.HALF_EVEN),
+                getAccountAmountReq(accounts.get(numberOfAccounts-2)));
+        assertEquals(new BigDecimal(20_000).setScale(2, RoundingMode.HALF_EVEN),
+                getAccountAmountReq(accounts.get(numberOfAccounts-1)));
 
 
-        return new BigDecimal(value);
     }
 
 

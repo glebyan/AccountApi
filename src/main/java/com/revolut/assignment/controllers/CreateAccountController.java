@@ -29,7 +29,7 @@ public class CreateAccountController extends RouterNanoHTTPD.GeneralHandler {
 
                 JSONObject object = new JSONObject().put("UUID", uuid);
 
-                logger.info("account " + uuid + " successfully created");
+                //logger.info("account " + uuid + " successfully created");
 
                 return newFixedLengthResponse(NanoHTTPD.Response.Status.CREATED, "application/json",
                         object.toString());
