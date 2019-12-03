@@ -6,7 +6,18 @@ The simple service that provides a REST API for basic operation with a bank acco
 
 ### Endpoints
 
+`/create` POST (no param), return UUID, 201 Created
+Create new bank account and return the UUID.
 
+`/deposit` POST json (account uuid, value for deposit), return 202 Accepted, or 404 Not found
+Deposit the bank account specified by UUID with given value. If operation successful return 202. If account not found return 404. 
+
+`/total` POST json (UUID), return BigDecimal, 200 OK, or 404 Not found
+Return the total amount of the bank account specified by UUID. Return 200 and amount in application/json body of response. Return 404 if account not exists.
+
+`/transfer` POST json (UUID from, UUID to, amount to transfer), return  202 Accepted, or 404 Nof found, 403 FORBIDDEN
+The main endpoint. Receive two account ID and amount of money for transfer. If one of account is not exist returns 404. 
+If operation success returns 202. If in account "from" the total amount of money lest then amount of transaction returns 403.
 
 ### Potential areas for improvement
 
