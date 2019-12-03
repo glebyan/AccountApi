@@ -12,38 +12,6 @@ public class RequestsTest {
     @Test
     public void requestsTest(){
 
-        try {
-
-
-            UUID uuid = RequestUtils.createAccountReq();
-            System.out.println("Creating account : " + uuid);
-
-            System.out.println("Deposit 1000 status : " + RequestUtils.depositAccountReq(uuid, new BigDecimal(1000)));
-            for (int i = 0; i < 10; i++){
-                RequestUtils.depositAccountReq(uuid, new BigDecimal(1.24));
-            }
-
-            System.out.println(uuid + " : " +RequestUtils.getAccountAmountReq(uuid));
-
-            for (int i = 0; i < 10; i++){
-                RequestUtils.createAccountReq();
-            }
-
-            System.out.println(RequestUtils.getFullAccountsListReq());
-
-            System.out.println(RequestUtils.getAccountHistoryReq(uuid));
-
-            UUID to = RequestUtils.createAccountReq();
-
-            System.out.println("REsult = " +
-                    RequestUtils.transferMoneyReq(
-                            uuid,
-                            to,
-                            new BigDecimal("1000").setScale(2, RoundingMode.HALF_EVEN)));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
 
     }

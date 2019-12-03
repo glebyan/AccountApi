@@ -1,7 +1,6 @@
 package com.revolut.assignment.services;
 
-import com.revolut.assignment.AccountNotExistException;
-import com.revolut.assignment.App;
+import com.revolut.assignment.exceptions.AccountNotExistException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,7 +11,7 @@ import java.util.logging.Logger;
 public class GetAccountAmountService {
     Connection connection;
 
-    private static final Logger logger = Logger.getLogger(App.class.getName());
+    private static final Logger logger = Logger.getLogger(GetAccountAmountService.class.getName());
 
     public BigDecimal getAmount(UUID uuid) throws SQLException {
 

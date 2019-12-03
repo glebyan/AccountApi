@@ -1,13 +1,10 @@
 package com.revolut.assignment.controllers;
 
-import com.revolut.assignment.App;
 import com.revolut.assignment.services.CreateAccountService;
-import com.revolut.assignment.storage.InMemory;
 import com.revolut.assignment.utils.Utils;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
 import org.json.JSONObject;
-
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
@@ -17,7 +14,7 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 
 public class CreateAccountController extends RouterNanoHTTPD.GeneralHandler {
 
-    private static final Logger logger = Logger.getLogger(App.class.getName());
+    private static final Logger logger = Logger.getLogger(CreateAccountController.class.getName());
 
     @Override
     public NanoHTTPD.Response get(

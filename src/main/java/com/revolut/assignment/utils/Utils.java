@@ -27,6 +27,7 @@ public class Utils {
 
     public static final String WRONG_REQUEST = "{\"errormessage\":\"wrong request type\"}";
     public static final String ACCOUNT_NOT_EXIST = "{\"errormessage\":\"given account not exist\"}";
+    public static final String NOT_ENOUGH_MONEY = "{\"errormessage\":\"not enough money\"}";
 
     public static JSONObject getJSONObject(NanoHTTPD.IHTTPSession session){
 

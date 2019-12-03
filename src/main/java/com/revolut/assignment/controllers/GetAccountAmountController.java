@@ -1,16 +1,11 @@
 package com.revolut.assignment.controllers;
 
-import com.revolut.assignment.AccountNotExistException;
-import com.revolut.assignment.App;
-import com.revolut.assignment.datamodel.Account;
-import com.revolut.assignment.services.DepositAccountService;
+import com.revolut.assignment.exceptions.AccountNotExistException;
 import com.revolut.assignment.services.GetAccountAmountService;
-import com.revolut.assignment.storage.InMemory;
 import com.revolut.assignment.utils.Utils;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
 import org.json.JSONObject;
-
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Map;
@@ -20,7 +15,7 @@ import java.util.logging.Logger;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 
 public class GetAccountAmountController extends RouterNanoHTTPD.GeneralHandler {
-    private static final Logger logger = Logger.getLogger(App.class.getName());
+    private static final Logger logger = Logger.getLogger(GetAccountAmountController.class.getName());
 
     @Override
     public NanoHTTPD.Response get(

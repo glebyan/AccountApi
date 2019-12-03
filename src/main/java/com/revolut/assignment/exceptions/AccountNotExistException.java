@@ -1,4 +1,4 @@
-package com.revolut.assignment;
+package com.revolut.assignment.exceptions;
 
 public class AccountNotExistException extends RuntimeException {
     public AccountNotExistException(String errorMessage, Throwable err) {

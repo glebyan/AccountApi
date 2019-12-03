@@ -51,8 +51,8 @@ public class App extends RouterNanoHTTPD {
         addRoute("/create", CreateAccountController.class); // () return UUID, 201 Created
         addRoute("/deposit", DepositAccountController.class);      // (UUID, value) return 202 Accepted, or 404 Not found
         addRoute("/total", GetAccountAmountController.class);        // (UUID) return BigDecimal, 200 OK, or 404 Not found
-        addRoute("/list", GetAccountsListController.class);     // () return List<UUID>, 200 OK
-        addRoute("/history", GetAccountHistoryController.class); // (UUID) return List<History> 200 OK, or 404 Not found
+//        addRoute("/list", GetAccountsListController.class);     // () return List<UUID>, 200 OK
+//        addRoute("/history", GetAccountHistoryController.class); // (UUID) return List<History> 200 OK, or 404 Not found
         addRoute("/transfer", TransferMoneyController.class);      // (UUID from, UUID to, amount) 202 Accepted, or 404 Nof found, 406 Not acceptable
     }
 

@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class CreateAccountService {
     Connection connection;
 
-    private static final Logger logger = Logger.getLogger(App.class.getName());
+    private static final Logger logger = Logger.getLogger(CreateAccountService.class.getName());
 
     public UUID createAccount() throws SQLException {
 

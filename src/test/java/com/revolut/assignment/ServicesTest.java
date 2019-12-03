@@ -1,5 +1,7 @@
 package com.revolut.assignment;
 
+import com.revolut.assignment.exceptions.AccountNotExistException;
+import com.revolut.assignment.exceptions.NotEnoughMoneyException;
 import com.revolut.assignment.services.CreateAccountService;
 import com.revolut.assignment.services.DepositAccountService;
 import com.revolut.assignment.services.GetAccountAmountService;
@@ -35,7 +37,6 @@ public class ServicesTest {
             e.printStackTrace();
             res = e;
         }
-        System.out.println(uuid);
 
         assertNotNull("UUID", uuid);
         assertNull("SQLException", res);
@@ -82,7 +83,6 @@ public class ServicesTest {
         }
 
         assertNotNull(t);
-
     }
 
     @Test
@@ -155,15 +155,61 @@ public class ServicesTest {
     }
 
     @Test
-    public void TransferMoneyServiceNoEnoughMoneyTest(){
+    public void TransferMoneyServiceNoEnoughMoneyTest() throws SQLException {
+        TransferMoneyService transferMoneyService = new TransferMoneyService();
+        CreateAccountService createAccountService = new CreateAccountService();
 
+        UUID from = createAccountService.createAccount();
+        UUID to = createAccountService.createAccount();
+
+        NotEnoughMoneyException notEnoughMoneyException = null;
+
+        try {
+            transferMoneyService.transferMoney(from, to, new BigDecimal(500).setScale(2, RoundingMode.HALF_EVEN));
+        }catch(NotEnoughMoneyException e){
+            notEnoughMoneyException = e;
+        }
+
+        assertNotNull(notEnoughMoneyException);
     }
 
     @Test
-    public void TransferMoneyServiceAccountNotExistedTest(){
+    public void TransferMoneyServiceAccountFromNotExistedTest() throws SQLException {
+        TransferMoneyService transferMoneyService = new TransferMoneyService();
+        CreateAccountService createAccountService = new CreateAccountService();
 
+        UUID from = UUID.randomUUID();//createAccountService.createAccount();
+        UUID to = createAccountService.createAccount();
+
+        AccountNotExistException accountNotExistException = null;
+
+        try {
+            transferMoneyService.transferMoney(from, to, new BigDecimal(500).setScale(2, RoundingMode.HALF_EVEN));
+        }catch(AccountNotExistException e){
+            accountNotExistException = e;
+        }
+
+        assertNotNull(accountNotExistException);
     }
 
+    @Test
+    public void TransferMoneyServiceAccountToNotExistedTest() throws SQLException {
+        TransferMoneyService transferMoneyService = new TransferMoneyService();
+        CreateAccountService createAccountService = new CreateAccountService();
+
+        UUID from = createAccountService.createAccount();
+        UUID to = UUID.randomUUID();//createAccountService.createAccount();
+
+        AccountNotExistException accountNotExistException = null;
+
+        try {
+            transferMoneyService.transferMoney(from, to, new BigDecimal(500).setScale(2, RoundingMode.HALF_EVEN));
+        }catch(AccountNotExistException e){
+            accountNotExistException = e;
+        }
+
+        assertNotNull(accountNotExistException);
+    }
 
     @AfterClass
     public static void cleanup() {

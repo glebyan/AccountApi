@@ -1,8 +1,7 @@
 package com.revolut.assignment.services;
 
-import com.revolut.assignment.AccountNotExistException;
-import com.revolut.assignment.App;
-import com.revolut.assignment.NotEnoughMoneyException;
+import com.revolut.assignment.exceptions.AccountNotExistException;
+import com.revolut.assignment.exceptions.NotEnoughMoneyException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -14,7 +13,7 @@ public class TransferMoneyService {
 
     Connection connection;
 
-    private static final Logger logger = Logger.getLogger(App.class.getName());
+    private static final Logger logger = Logger.getLogger(TransferMoneyService.class.getName());
 
     public void transferMoney(UUID from, UUID to, BigDecimal delta) throws SQLException {
 
