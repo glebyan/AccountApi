@@ -1,42 +1,56 @@
 package com.revolut.assignment.controllers;
 
+import com.revolut.assignment.AccountNotExistException;
+import com.revolut.assignment.App;
 import com.revolut.assignment.datamodel.Account;
+import com.revolut.assignment.services.DepositAccountService;
+import com.revolut.assignment.services.GetAccountAmountService;
 import com.revolut.assignment.storage.InMemory;
 import com.revolut.assignment.utils.Utils;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 
 public class GetAccountAmountController extends RouterNanoHTTPD.GeneralHandler {
+    private static final Logger logger = Logger.getLogger(App.class.getName());
+
     @Override
     public NanoHTTPD.Response get(
             RouterNanoHTTPD.UriResource uriResource, Map<String, String> urlParams, NanoHTTPD.IHTTPSession session) {
 
-        JSONObject sessionObject = Utils.getJSONObject(session);
-        UUID uuid = UUID.fromString(sessionObject.getString("UUID"));
-
         if (session.getMethod() == NanoHTTPD.Method.POST) {
 
-            JSONObject object = new JSONObject();
+            JSONObject sessionObject = Utils.getJSONObject(session);
 
-            Account account = InMemory.getAccountByUUID(uuid);
+            GetAccountAmountService getAccountAmountService = new GetAccountAmountService();
 
-            if (account != null) {
-                object.put("UUID", uuid);
-                object.put("amount", account.getValue().toString());
+            try {
+                BigDecimal amount = getAccountAmountService.getAmount(
+                        UUID.fromString(sessionObject.getString("UUID")));
 
-                return newFixedLengthResponse(NanoHTTPD.Response.Status.OK, "application/json",
-                        object.toString());
+                JSONObject responseJson = new JSONObject();
+                responseJson.put("UUID", sessionObject.getString("UUID"));
+                responseJson.put("amount", amount.toString());
 
-            } else {
+                return newFixedLengthResponse(NanoHTTPD.Response.Status.ACCEPTED, "application/json",
+                        responseJson.toString());
+            } catch (SQLException e) {
+                logger.warning("SQL Error");
+                return newFixedLengthResponse(NanoHTTPD.Response.Status.INTERNAL_ERROR, "application/json",
+                        "");
+            } catch (AccountNotExistException e) {
                 return newFixedLengthResponse(NanoHTTPD.Response.Status.NOT_FOUND, "application/json",
                         Utils.ACCOUNT_NOT_EXIST);
             }
+
         }
         return newFixedLengthResponse(NanoHTTPD.Response.Status.NOT_FOUND, "application/json",
                 Utils.WRONG_REQUEST);

@@ -9,13 +9,12 @@ import java.sql.*;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-public class DepositAccountService {
-
+public class GetAccountAmountService {
     Connection connection;
 
     private static final Logger logger = Logger.getLogger(App.class.getName());
 
-    public void depositAccount(UUID uuid, BigDecimal delta) throws SQLException {
+    public BigDecimal getAmount(UUID uuid) throws SQLException {
 
         try {
             connection = DriverManager.getConnection(
@@ -30,7 +29,7 @@ public class DepositAccountService {
             checkIfAccountExist.executeQuery();
             ResultSet checkIfAccountExistResultSet = checkIfAccountExist.getResultSet();
             checkIfAccountExistResultSet.next();
-            if (!checkIfAccountExistResultSet.getBoolean(1)){
+            if (checkIfAccountExistResultSet.getBoolean(1)==false){
                 connection.rollback();
                 connection.close();
                 throw new AccountNotExistException("Account not exist", new NullPointerException());
@@ -49,17 +48,9 @@ public class DepositAccountService {
 
             currentAccountAmount.setScale(2, RoundingMode.HALF_EVEN);
 
-            BigDecimal newAccountAmount = currentAccountAmount.add(delta).setScale(2, RoundingMode.HALF_EVEN);
-
-            PreparedStatement updateAccountAmount = connection.prepareStatement(
-                    "update accounts set TOTAL_AMOUNT = ? where ACCOUNT_UUID = ? "
-            );
-            updateAccountAmount.setBigDecimal(1, newAccountAmount);
-            updateAccountAmount.setString(2, uuid.toString());
-
-            updateAccountAmount.executeUpdate();
-
             connection.commit();
+
+            return currentAccountAmount;
         }catch(SQLException e){
             throw e;
         } finally {
@@ -69,7 +60,6 @@ public class DepositAccountService {
                 logger.warning("Connection is not closed properly");
             }
         }
+
     }
-
-
 }
