@@ -21,11 +21,6 @@ import static org.junit.Assert.assertNotNull;
 
 public class ServicesTest {
 
-    @BeforeClass
-    public static void init() {
-        App.main(new String[]{});
-    }
-
     @Test
     public void CreateAccountServiceTest() {
         CreateAccountService service = new CreateAccountService();
