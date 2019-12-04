@@ -50,15 +50,15 @@ This also include soap-ui project if you wish (AccountApi-soapui-project.xml).
 The integration test invoke endpoint to perform operation and check the changes in DB. It may be time-consumed depending of 
 speed or your PC so you may adjust the number off accounts that uses for test by changing the `numberOfAccounts` field.
 
-At first, it create 100 accounts in DB and check the quantity of created accounts.
+At first, it create 10 accounts in DB and check the quantity of created accounts.
 
-Then it fill this 100 accounts by default amount value (10_000). 
+Then it fill this 10 accounts by default amount value (10_000). 
 
 After that it move 1000 using 10 threads from first account to second and further to last account.
-As result it must be zero amount in first account, 1_010_000 in last account and 10_000 in all other accounts.
+As result it must be zero amount in first account, 20_00 in last account and 10_000 in all other accounts.
 This test display the behavior of the system in concurrency mode. 
 
-All test depends each other couse it affected DB. In my humble opinion its acceptable for integration tests.  
+All test depends each other because it affected DB. In my humble opinion its acceptable for integration tests.  
 
 I don't implement negative test for endpoints because of lack of time. But negative test is implemented in unit tests for services, so I believe it works fine ) 
  
