@@ -15,11 +15,17 @@ import java.math.RoundingMode;
 import java.sql.*;
 import java.util.UUID;
 
+import static com.revolut.assignment.utils.Utils.dbInit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
 
 public class ServicesTest {
+
+    @BeforeClass
+    public static void setUpDB(){
+        dbInit();
+    }
 
     @Test
     public void CreateAccountServiceTest() {

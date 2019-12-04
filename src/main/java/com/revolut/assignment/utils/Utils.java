@@ -1,10 +1,8 @@
 package com.revolut.assignment.utils;
 
-import com.revolut.assignment.App;
 import fi.iki.elonen.NanoHTTPD;
 import org.h2.tools.RunScript;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

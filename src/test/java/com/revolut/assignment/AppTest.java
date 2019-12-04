@@ -1,5 +1,6 @@
 package com.revolut.assignment;
 
+import com.revolut.assignment.utils.Utils;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 import java.io.IOException;
@@ -9,12 +10,15 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import static com.revolut.assignment.requests.RequestUtils.*;
 import static org.junit.Assert.assertEquals;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AppTest {
+
+    private static final Logger logger = Logger.getLogger(AppTest.class.getName());
 
     int numberOfAccounts = 10; //should be divisible by 10 without remainder
 
@@ -27,6 +31,7 @@ public class AppTest {
     public void test1CreateAccount() throws SQLException {
         try {
 
+            logger.info("Start integration test 1 - create accounts");
 
             for (int i = 0; i < numberOfAccounts; i++) {
                 createAccountReq();
@@ -53,6 +58,8 @@ public class AppTest {
     @Test
     public void test2DepositAccount() throws SQLException {
         try {
+
+            logger.info("Start integration test 2 - deposit accounts");
 
             ArrayList<UUID> accounts = new ArrayList();
 
@@ -86,6 +93,9 @@ public class AppTest {
 
     @Test
     public void test3TransferMoney() throws SQLException, IOException, InterruptedException {
+
+        logger.info("Start integration test 3 - transfer money");
+
         ArrayList<UUID> accounts = new ArrayList();
 
         Connection connection = DriverManager.getConnection("jdbc:h2:~/h2/AccountApi", "sa", "");
