@@ -1,6 +1,7 @@
 package com.revolut.assignment.services;
 
 import com.revolut.assignment.App;
+import com.revolut.assignment.utils.Utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,8 +20,7 @@ public class CreateAccountService {
     public UUID createAccount() throws SQLException {
 
         try {
-            connection = DriverManager.getConnection(
-                    "jdbc:h2:~/h2/AccountApi", "sa", "");
+            connection = Utils.getConnection();
             connection.setAutoCommit(false);
             connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 
@@ -41,6 +41,7 @@ public class CreateAccountService {
 
             return uuid;
         }catch(SQLException e){
+            System.out.println(e);
             throw e;
         } finally {
             try {

@@ -1,6 +1,7 @@
 package com.revolut.assignment.services;
 
 import com.revolut.assignment.exceptions.AccountNotExistException;
+import com.revolut.assignment.utils.Utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -17,19 +18,18 @@ public class DepositAccountService {
     public void depositAccount(UUID uuid, BigDecimal delta) throws SQLException {
 
         try {
-            connection = DriverManager.getConnection(
-                    "jdbc:h2:~/h2/AccountApi", "sa", "");
+            connection = Utils.getConnection();
             connection.setAutoCommit(false);
             connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 
             PreparedStatement checkIfAccountExist = connection.prepareStatement(
-                    "select case when count(*) > 0 then true else false end from accounts where ACCOUNT_UUID = ? "
+                    "select count(*) from accounts where ACCOUNT_UUID = ? "
             );
             checkIfAccountExist.setString(1, uuid.toString());
             checkIfAccountExist.executeQuery();
             ResultSet checkIfAccountExistResultSet = checkIfAccountExist.getResultSet();
             checkIfAccountExistResultSet.next();
-            if (!checkIfAccountExistResultSet.getBoolean(1)){
+            if (checkIfAccountExistResultSet.getInt(1) == 0 ){
                 connection.rollback();
                 connection.close();
                 throw new AccountNotExistException("Account not exist", new NullPointerException());
@@ -37,7 +37,7 @@ public class DepositAccountService {
             }
 
             PreparedStatement selectCurrentAmount = connection.prepareStatement(
-                    "select TOTAL_AMOUNT from accounts where ACCOUNT_UUID = ? ;"
+                    "select TOTAL_AMOUNT from accounts where ACCOUNT_UUID = ? "
             );
 
             selectCurrentAmount.setString(1, uuid.toString());
@@ -60,6 +60,7 @@ public class DepositAccountService {
 
             connection.commit();
         }catch(SQLException e){
+            System.out.println(e);
             throw e;
         } finally {
             try {

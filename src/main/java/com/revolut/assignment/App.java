@@ -20,7 +20,7 @@ public class App extends RouterNanoHTTPD {
     public App(int port) throws IOException {
         super(port);
 //        startH2();
-        dbInit();
+//        dbInit();
     }
 
     public static void main(String[] args) {

@@ -2,6 +2,7 @@ package com.revolut.assignment.services;
 
 import com.revolut.assignment.exceptions.AccountNotExistException;
 import com.revolut.assignment.exceptions.NotEnoughMoneyException;
+import com.revolut.assignment.utils.Utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,39 +20,38 @@ public class TransferMoneyService {
 
         try {
             delta.setScale(2, RoundingMode.HALF_EVEN);
-            connection = DriverManager.getConnection(
-                    "jdbc:h2:~/h2/AccountApi", "sa", "");
+            connection = Utils.getConnection();
             connection.setAutoCommit(false);
             connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 
             PreparedStatement checkIfAccountFromExist = connection.prepareStatement(
-                    "select case when count(*) > 0 then true else false end from accounts where ACCOUNT_UUID = ? "
+                    "select count(*) end from accounts where ACCOUNT_UUID = ? "
             );
             checkIfAccountFromExist.setString(1, from.toString());
             checkIfAccountFromExist.executeQuery();
             ResultSet checkIfAccountFromExistResultSet = checkIfAccountFromExist.getResultSet();
             checkIfAccountFromExistResultSet.next();
-            if (!checkIfAccountFromExistResultSet.getBoolean(1)){
+            if (checkIfAccountFromExistResultSet.getInt(1) == 0){
                 connection.rollback();
                 connection.close();
                 throw new AccountNotExistException("Account not exist", new NullPointerException());
             }
 
             PreparedStatement checkIfAccountToExist = connection.prepareStatement(
-                    "select case when count(*) > 0 then true else false end from accounts where ACCOUNT_UUID = ? "
+                    "select count(*) from accounts where ACCOUNT_UUID = ? "
             );
             checkIfAccountToExist.setString(1, to.toString());
             checkIfAccountToExist.executeQuery();
             ResultSet checkIfAccountToExistResultSet = checkIfAccountToExist.getResultSet();
             checkIfAccountToExistResultSet.next();
-            if (!checkIfAccountToExistResultSet.getBoolean(1)){
+            if (checkIfAccountToExistResultSet.getInt(1) == 0){
                 connection.rollback();
                 connection.close();
                 throw new AccountNotExistException("Account not exist", new NullPointerException());
             }
 
             PreparedStatement selectCurrentAmount = connection.prepareStatement(
-                    "select TOTAL_AMOUNT from accounts where ACCOUNT_UUID = ? ;"
+                    "select TOTAL_AMOUNT from accounts where ACCOUNT_UUID = ? "
             );
 
             selectCurrentAmount.setString(1, from.toString());
@@ -74,7 +74,7 @@ public class TransferMoneyService {
             updateAccountFromAmount.executeUpdate();
 
             PreparedStatement selectToAmount = connection.prepareStatement(
-                    "select TOTAL_AMOUNT from accounts where ACCOUNT_UUID = ? ;"
+                    "select TOTAL_AMOUNT from accounts where ACCOUNT_UUID = ? "
             );
 
             selectToAmount.setString(1, to.toString());

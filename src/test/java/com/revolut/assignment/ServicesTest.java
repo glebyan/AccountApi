@@ -6,6 +6,7 @@ import com.revolut.assignment.services.CreateAccountService;
 import com.revolut.assignment.services.DepositAccountService;
 import com.revolut.assignment.services.GetAccountAmountService;
 import com.revolut.assignment.services.TransferMoneyService;
+import com.revolut.assignment.utils.Utils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,10 +23,10 @@ import static org.junit.Assert.assertNotNull;
 
 public class ServicesTest {
 
-    @BeforeClass
-    public static void setUpDB(){
-        dbInit();
-    }
+//    @BeforeClass
+//    public static void setUpDB(){
+//        dbInit();
+//    }
 
     @Test
     public void CreateAccountServiceTest() {
@@ -53,7 +54,7 @@ public class ServicesTest {
         DepositAccountService depositAccountService = new DepositAccountService();
         depositAccountService.depositAccount(uuid, new BigDecimal(1000));
 
-        Connection connection = DriverManager.getConnection("jdbc:h2:~/h2/AccountApi", "sa", "");
+        Connection connection = Utils.getConnection();
 
         PreparedStatement ps = connection.prepareStatement(
                 "select TOTAL_AMOUNT from ACCOUNTS where ACCOUNT_UUID = ?"
@@ -128,7 +129,7 @@ public class ServicesTest {
 
         transferMoneyService.transferMoney(from, to, new BigDecimal(500).setScale(2, RoundingMode.HALF_EVEN));
 
-        Connection connection = DriverManager.getConnection("jdbc:h2:~/h2/AccountApi", "sa", "");
+        Connection connection = Utils.getConnection();
 
         PreparedStatement selectFromSt = connection.prepareStatement(
                 "select TOTAL_AMOUNT from ACCOUNTS where ACCOUNT_UUID = ?"

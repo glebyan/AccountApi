@@ -27,6 +27,10 @@ public class Utils {
     public static final String ACCOUNT_NOT_EXIST = "{\"errormessage\":\"given account not exist\"}";
     public static final String NOT_ENOUGH_MONEY = "{\"errormessage\":\"not enough money\"}";
 
+    private static final String CONNECTION_STRUING = "jdbc:oracle:thin:@localhost:1521/XEPDB1";
+    private static final String PASSWORD = "revolut";
+    private static final String USERNAME = "revolut";
+
     public static JSONObject getJSONObject(NanoHTTPD.IHTTPSession session){
 
         final HashMap<String, String> map = new HashMap<String, String>();
@@ -48,16 +52,6 @@ public class Utils {
         return new BigDecimal(string).setScale(2, RoundingMode.HALF_EVEN);
     }
 
-    public static Connection getConnection(){
-
-        try(Connection connection = getConnection()) {
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
     public static void dbInit(){
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         InputStream inputStream = classloader.getResourceAsStream("schema.sql");
@@ -71,5 +65,16 @@ public class Utils {
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Couldn't initialize DB", e);
         }
+    }
+
+    public static Connection getConnection(){
+        Connection connection = null;
+        try {
+            connection =  DriverManager.getConnection(CONNECTION_STRUING, USERNAME, PASSWORD);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+//        logger.info("Connection returned");
+        return connection;
     }
 }

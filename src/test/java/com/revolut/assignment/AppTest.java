@@ -37,7 +37,7 @@ public class AppTest {
                 createAccountReq();
             }
 
-            Connection connection = DriverManager.getConnection("jdbc:h2:~/h2/AccountApi", "sa", "");
+            Connection connection = Utils.getConnection();
 
             PreparedStatement ps = connection.prepareStatement(
                     "select count(*) from ACCOUNTS"
@@ -63,7 +63,7 @@ public class AppTest {
 
             ArrayList<UUID> accounts = new ArrayList();
 
-            Connection connection = DriverManager.getConnection("jdbc:h2:~/h2/AccountApi", "sa", "");
+            Connection connection = Utils.getConnection();
 
             PreparedStatement selectAccountUuidFromAccounts = connection.prepareStatement(
                     "select ACCOUNT_UUID from ACCOUNTS"
@@ -98,7 +98,7 @@ public class AppTest {
 
         ArrayList<UUID> accounts = new ArrayList();
 
-        Connection connection = DriverManager.getConnection("jdbc:h2:~/h2/AccountApi", "sa", "");
+        Connection connection = Utils.getConnection();
 
         PreparedStatement selectAccountUuidFromAccounts = connection.prepareStatement(
                 "select ACCOUNT_UUID from ACCOUNTS"
