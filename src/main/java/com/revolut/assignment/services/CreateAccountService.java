@@ -21,8 +21,6 @@ public class CreateAccountService {
 
         try {
             connection = Utils.getConnection();
-            connection.setAutoCommit(false);
-            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 
             PreparedStatement ps = connection.prepareStatement(
                     "insert into  accounts (account_uuid, total_amount) " +

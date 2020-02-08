@@ -27,9 +27,12 @@ public class Utils {
     public static final String ACCOUNT_NOT_EXIST = "{\"errormessage\":\"given account not exist\"}";
     public static final String NOT_ENOUGH_MONEY = "{\"errormessage\":\"not enough money\"}";
 
-    private static final String CONNECTION_STRUING = "jdbc:oracle:thin:@localhost:1521/XEPDB1";
-    private static final String PASSWORD = "revolut";
-    private static final String USERNAME = "revolut";
+//    private static final String CONNECTION_STRUING = "jdbc:oracle:thin:@localhost:1521/XEPDB1";
+    private static final String CONNECTION_STRUING = "jdbc:h2:tcp://localhost:9092/~/H2DB/accountapi";
+//    private static final String PASSWORD = "revolut";
+    private static final String PASSWORD = "sa";
+//    private static final String USERNAME = "revolut";
+    private static final String USERNAME = "sa";
 
     public static JSONObject getJSONObject(NanoHTTPD.IHTTPSession session){
 
@@ -67,10 +70,19 @@ public class Utils {
         }
     }
 
-    public static Connection getConnection(){
+    public static Connection getConnection()  {
+
+        try{
+            Class.forName("org.h2.Driver");
+        } catch (ClassNotFoundException e){
+            logger.warning("cant find driver class\n" + e);
+        }
+
         Connection connection = null;
         try {
             connection =  DriverManager.getConnection(CONNECTION_STRUING, USERNAME, PASSWORD);
+            connection.setAutoCommit(false);
+            connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
         } catch (SQLException e) {
             e.printStackTrace();
         }

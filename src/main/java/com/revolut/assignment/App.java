@@ -1,17 +1,33 @@
 package com.revolut.assignment;
 
 import com.revolut.assignment.controllers.*;
+import com.revolut.assignment.utils.Utils;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
+import org.h2.tools.Server;
 
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.revolut.assignment.utils.Utils.dbInit;
 
+/* GLOBAL TO DO LIST
+ * TODO Растащить приложение и интеграционные тесты на два модуля в одном проекте, чтобы у каждого был собственный pom
+ *  который ссылается на родительскоий pom
+ * TODO настроить профили сборки в мавене:
+ *  1. Сборка проекта с разными БД
+ *  2. Сборка проекта со встроенными интеграционными тестами
+ *  3. Сборка проекта и тестов отдельно
+ * TODO добавить логгирование в тесты
+ * TODO создать интерфейсы для сервисов
+ * TODO вынести код общения с БД из сервисов - создать DAO
+ * TODO добавить поддержку IoC (google)
+ * TODO перевести на jetty
+ */
 
 public class App extends RouterNanoHTTPD {
 

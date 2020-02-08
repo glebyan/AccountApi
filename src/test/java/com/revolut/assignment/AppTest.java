@@ -23,8 +23,18 @@ public class AppTest {
     int numberOfAccounts = 10; //should be divisible by 10 without remainder
 
     @BeforeClass
-    public static void setUp() {
+    public static void setUp() throws SQLException {
         App.main(new String[]{});
+        cleanupDB();
+
+    }
+
+    public static void cleanupDB() throws SQLException {
+        Connection connection = Utils.getConnection();
+        PreparedStatement ps = connection.prepareStatement(
+                "truncate table  ACCOUNTS");
+        int affected = ps.executeUpdate();
+        System.out.println("DB cleanUP finished " + affected + " records deleted");
     }
 
     @Test
@@ -34,7 +44,7 @@ public class AppTest {
             logger.info("Start integration test 1 - create accounts");
 
             for (int i = 0; i < numberOfAccounts; i++) {
-                createAccountReq();
+                System.out.println(createAccountReq());
             }
 
             Connection connection = Utils.getConnection();
@@ -82,9 +92,14 @@ public class AppTest {
             for (UUID u : accounts){
                 assertEquals(new BigDecimal(10_000).setScale(2, RoundingMode.HALF_EVEN),
                         getAccountAmountReq(u));
-
             }
 
+            PreparedStatement wholeAmount = connection.prepareStatement(
+                    "select sum(total_amount) from accounts");
+            wholeAmount.executeQuery();
+            ResultSet wholeAmountResultSet = wholeAmount.getResultSet();
+            wholeAmountResultSet.next();
+            System.out.println("Whole Amount = " + wholeAmountResultSet.getBigDecimal(1));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -127,10 +142,15 @@ public class AppTest {
 
         List<Thread> threadList = new ArrayList<>();
         for (int i = 0; i < 10; i++){
-            threadList.add(new Thread(run));
+            Thread thread = new Thread(run);
+            thread.setName("TestThread");
+            threadList.add(thread);
         }
         for (Thread t : threadList){
             t.start();
+        }
+
+        for (Thread t : threadList){
             t.join();
         }
 

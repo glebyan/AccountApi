@@ -18,8 +18,6 @@ public class GetAccountAmountService {
 
         try {
             connection = Utils.getConnection();
-            connection.setAutoCommit(false);
-            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 
             PreparedStatement checkIfAccountExist = connection.prepareStatement(
                     "select count(*) from accounts where ACCOUNT_UUID = ? "

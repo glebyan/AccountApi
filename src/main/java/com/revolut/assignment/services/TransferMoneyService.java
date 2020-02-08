@@ -21,8 +21,6 @@ public class TransferMoneyService {
         try {
             delta.setScale(2, RoundingMode.HALF_EVEN);
             connection = Utils.getConnection();
-            connection.setAutoCommit(false);
-            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 
             PreparedStatement checkIfAccountFromExist = connection.prepareStatement(
                     "select count(*) end from accounts where ACCOUNT_UUID = ? "
@@ -95,6 +93,7 @@ public class TransferMoneyService {
 
             connection.commit();
         }catch(SQLException e){
+            System.out.println(e);
             throw e;
         } finally {
             try {
